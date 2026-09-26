@@ -1,0 +1,25 @@
+import { test, expect } from '@playwright/test';
+test('published site loads assets, deep links, and interactive pipeline', async ({page}) => {
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  const response = await page.goto('https://owfarisz.github.io/servenow-recovery-console/');
+  expect(response?.status()).toBe(200);
+  await expect(page.getByRole('heading', {name:'Pulihkan sistem. Kembalikan kepercayaan.'})).toBeVisible();
+  await page.getByLabel('Skenario', {exact:true}).selectOption('S3');
+  await page.getByRole('link', {name:'Streamline the Flow',exact:true}).click();
+  await expect(page).toHaveURL(/#\/flow$/);
+  await page.reload();
+  await expect(page.getByRole('heading', {name:'Streamline the Flow',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'Pipeline data',exact:true}).click();
+  await page.getByRole('button',{name:'Run next batch'}).click();
+  await page.getByRole('button',{name:'Proses 3 detik'}).click();
+  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('servenow-v1')!).pipeline.checkpoint)).toBe(100);
+  await page.getByRole('button',{name:'Koreksi mapping'}).click();
+  await page.getByRole('button',{name:'Run next batch'}).click();
+  await page.getByRole('button',{name:'Proses 3 detik'}).click();
+  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('servenow-v1')!).pipeline.checkpoint)).toBe(103);
+  await page.setViewportSize({width:390,height:844});
+  await page.screenshot({path:'artifacts/published-mobile.png',fullPage:true});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  expect(errors).toEqual([]);
+});

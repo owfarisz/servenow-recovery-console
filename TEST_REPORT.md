@@ -7,7 +7,7 @@ Verified locally on 27 September 2026 with Node 26, TypeScript, Vitest and Playw
 - `npm run typecheck`: passed.
 - `npm test`: 13 domain tests passed.
 - `npm run build`: passed, static output in `dist/`.
-- `npm run test:e2e`: five browser workflows; screenshots and JSON export saved under `artifacts/`.
+- `npm run test:e2e`: five browser workflows passed; screenshots and JSON export saved under `artifacts/`.
 
 Domain checks cover atomic acceptance/outbox, publisher recovery, bounded retry, ambiguous outcome verification, remote idempotency/version guards, S1 completion and explicit customer/renewal decisions, S2 readiness and compliance gaps, S3 failed checkpoint preservation and replay, account isolation, covenant invalidation, strict error thresholds, missing/insufficient evidence, fixture/live-window separation, budget limits and mandatory liability, refund account isolation, unique evidence identities, reload-paused persistence and simulation-marked export.
 
@@ -28,3 +28,9 @@ Files: `artifacts/overview-desktop.png`, `overview-presentation.png`, `overview-
 ## Boundaries
 
 Tests verify the deterministic frontend demonstrator, not real infrastructure throughput, contractual validity, compliance, disaster recovery or Indonesian production data residency. Browser verification uses Chrome; Safari/Firefox have not been separately exercised. LocalStorage is per-browser/per-device; published hosting does not synchronize simulation sessions across devices.
+
+## Published deployment
+
+GitHub Pages: https://owfarisz.github.io/servenow-recovery-console/
+
+GitHub Actions build and deploy completed successfully (run 36263700639). Clean Linux runner independently passed npm ci, typecheck, 13 unit tests, and the Pages-base production build. Public Chrome smoke test passed: HTTP 200, static assets, hash route navigation/reload, S3 failure/replay (checkpoint 100→103), mobile layout without document overflow, and no page errors. Screenshot: `artifacts/published-mobile.png`.

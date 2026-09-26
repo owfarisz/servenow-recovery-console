@@ -1,5 +1,8 @@
 # ServeNow Recovery Console
 
+**Website publik:** https://owfarisz.github.io/servenow-recovery-console/  
+**Repository:** https://github.com/owfarisz/servenow-recovery-console
+
 Demonstrator interaktif berbahasa Indonesia untuk proposal recovery ServeNow. Seluruh data sintetis. Tidak membutuhkan backend, API key, akun, atau layanan enterprise.
 
 ## Menjalankan
@@ -70,3 +73,5 @@ Runtime/dependency `.runtime.nosync` hanya workaround lokal untuk folder iCloud 
 ## Verifikasi
 
 Lihat `TEST_REPORT.md` untuk pemeriksaan yang benar-benar dijalankan dan batasnya. Setiap perangkat memiliki sesi simulasi sendiri di localStorage; URL publik membuka aplikasi yang sama tetapi tidak menyinkronkan keputusan antarperangkat.
+
+Pemeriksaan langsung pada website publik: `npm run test:e2e -- --config=playwright.public.config.ts`. Test ini memeriksa HTTP 200, aset, hash deep-link/reload, skenario pipeline, dan mobile overflow.
