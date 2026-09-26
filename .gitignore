@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.npm-cache/
+test-results/
+playwright-report/
+*.tsbuildinfo
+.runtime.nosync/
+.dependencies-old.nosync/
+
+/node_modules
