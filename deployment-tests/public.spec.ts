@@ -10,6 +10,8 @@ test('published site loads assets, deep links, and interactive pipeline', async 
   await page.getByRole('button',{name:'Periksa gangguan',exact:true}).click();
   await expect(page.getByRole('heading',{name:'Jalur penyimpanan terlalu penuh.'})).toBeVisible();
   await expect(page.getByRole('button',{name:/Perbesar Penyimpanan data/})).toHaveClass(/problem/);
+  await expect(page.locator('.data-motion')).toHaveAttribute('data-scene','queue');
+  await expect(page.locator('.ticket-pile')).toBeVisible();
   await page.screenshot({path:'artifacts/published-workflow.png',fullPage:true,animations:'disabled'});
   await page.getByRole('button',{name:'Buka tampilan lengkap'}).click();
   await page.getByLabel('Skenario', {exact:true}).selectOption('S3');

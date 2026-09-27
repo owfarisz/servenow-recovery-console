@@ -5,12 +5,13 @@ test('packets move, stop before faults, pause, and respect reduced motion',async
   await page.getByRole('button',{name:'Periksa gangguan',exact:true}).click();
   const motion=page.locator('.data-motion');
   await expect(motion).toHaveAttribute('data-flow-state','blocked');
-  const packet=page.locator('.data-packet').first();
-  const position=()=>packet.evaluate(e=>getComputedStyle(e).offsetDistance);
+  const packet=page.locator('.queue-arrival').first();
+  const position=()=>packet.evaluate(e=>getComputedStyle(e).transform);
   const now=await page.evaluate(()=>JSON.parse(localStorage.getItem('servenow-v1')!).run.now);
   const first=await position();
   await expect.poll(position,{timeout:5000}).not.toBe(first);
-  expect(await packet.evaluate(e=>getComputedStyle(e).offsetPath)).toContain('277');
+  await expect(page.locator('.ticket-pile')).toBeVisible();
+  await expect(page.locator('.queue-release')).toHaveCount(0);
   await page.getByRole('button',{name:'Jeda animasi data',exact:true}).click();
   await expect(motion).toHaveAttribute('data-motion','paused');
   await packet.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));
@@ -20,6 +21,8 @@ test('packets move, stop before faults, pause, and respect reduced motion',async
   await expect(motion).toHaveAttribute('data-motion','running');
   await page.getByRole('button',{name:'Pulihkan layanan',exact:true}).click();
   await expect(motion).toHaveAttribute('data-flow-state','flowing');
+  await expect(page.locator('.queue-release')).toHaveCount(2);
+  await expect(page.locator('.ticket-pile')).toHaveCount(0);
   const recovered=await position();await expect.poll(position).not.toBe(recovered);
   await page.screenshot({path:'artifacts/data-motion-desktop.png',fullPage:true});
   await page.getByRole('button',{name:'Proses 10 tiket',exact:true}).click();

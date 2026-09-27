@@ -1,0 +1,37 @@
+import type { CSSProperties } from 'react';
+export type MotionScene='queue'|'bank'|'report'|'generic';
+export type MotionPhase='symptom'|'fault'|'working'|'ready'|'resolved'|'retry';
+const delay=(i:number)=>({'--case-delay':`${-i*1.15}s`} as CSSProperties);
+function Ticket({x,y}:{x:number;y:number}){return <g transform={`translate(${x} ${y})`}><rect className="case-ticket" width="34" height="25" rx="5"/><path className="case-ink" d="M8 9 H26 M8 16 H20"/></g>}
+function Store({x,y,label,active=false}:{x:number;y:number;label:string;active?:boolean}){return <g className={active?'case-store active':'case-store'} transform={`translate(${x} ${y})`}><rect width="117" height="64" rx="12"/><ellipse cx="24" cy="21" rx="12" ry="5"/><path d="M12 21 V40 C12 47 36 47 36 40 V21 M12 30 C12 37 36 37 36 30"/><text x="47" y="36">{label}</text></g>}
+export default function CaseMotion({scene,phase}:{scene:Exclude<MotionScene,'generic'>;phase:MotionPhase}){
+  const healthy=phase==='ready'||phase==='resolved';
+  if(scene==='queue')return <svg className={`case-canvas queue-scene ${healthy?'cleared':'congested'} phase-${phase}`} viewBox="0 0 520 260" role="img" aria-label={healthy?'Antrean dibagi ke dua jalur kerja agar tiket diproses bergiliran.':phase==='working'?'Tiket diproses bergiliran menuju sistem pelanggan.':phase==='retry'?'Satu tiket menunggu giliran dicoba kembali.':'Tiket berdatangan dan menumpuk karena proses layanan melambat.'}>
+    <text className="case-label" x="24" y="28">Tiket masuk</text><text className="case-label" x="216" y="28">{healthy?'Beban dibagi':phase==='working'?'Diproses bergiliran':'Antrean membesar'}</text>
+    {[67,120,173].map((y,i)=><g key={y}><path className="case-track" d={`M30 ${y} H218`}/><g className={`queue-arrival qa-${i}`} style={delay(i)}><Ticket x={26} y={y-12}/></g></g>)}
+    {!healthy&&phase!=='working'&&<g className="ticket-pile">{[0,1,2,3].map(i=><Ticket key={i} x={192+i*13} y={158-i*29}/>)}</g>}
+    <path className="case-track" d={healthy?'M223 120 H282 M282 120 V76 H370 M282 120 V166 H370':'M223 120 H370'}/>
+    {healthy?<><rect className="worker-box" x="370" y="48" width="124" height="57" rx="12"/><rect className="worker-box" x="370" y="138" width="124" height="57" rx="12"/><text className="case-label" x="395" y="82">Jalur 1</text><text className="case-label" x="395" y="172">Jalur 2</text>{[0,1].map(i=><g key={i} className={`queue-release release-${i}`} style={delay(i)}><Ticket x={0} y={0}/></g>)}</>:<><rect className="worker-box" x="370" y="88" width="124" height="65" rx="12"/><text className="case-label" x="385" y="127">{phase==='working'?'Memproses':phase==='retry'?'Coba lagi':'Menunggu'}</text>{phase==='working'?<g className="queue-working"><Ticket x={0} y={0}/></g>:<g className="queue-clock"><circle cx="321" cy="120" r="19"/><path d="M321 108 V120 L331 125"/></g>}</>}
+    <text className="case-caption" x="260" y="236" textAnchor="middle">{healthy?'Antrean diatur, pekerjaan tidak berebut jalur':phase==='working'?'Tiket dikirim satu per satu, hasilnya diperiksa':phase==='retry'?'Tunggu sejenak sebelum mencoba lagi':phase==='fault'?'Terlalu banyak pekerjaan memakai jalur data':'Tiket datang lebih cepat daripada prosesnya'}</text>
+  </svg>;
+  if(scene==='bank')return <svg className={`case-canvas bank-scene ${healthy?'switched':'disconnected'} phase-${phase}`} viewBox="0 0 520 260" role="img" aria-label={healthy?'Layanan bank dialihkan melalui jalur bawah ke penyimpanan pengganti yang siap.':phase==='symptom'?'Permintaan bank belum mendapat balasan; penyebab sedang diperiksa.':'Jalur ke penyimpanan utama putus; penyimpanan pengganti belum diaktifkan.'}>
+    <rect className="bank-building" x="24" y="83" width="105" height="91" rx="12"/><path className="bank-icon" d="M43 118 L76 99 L110 118 Z M49 123 V147 M67 123 V147 M85 123 V147 M104 123 V147 M42 153 H111"/><text className="case-label" x="76" y="199" textAnchor="middle">Layanan bank</text>
+    <path className="case-track main-link" d="M130 118 H235 M269 118 H313 V69 H368"/>
+    {phase==='symptom'?<g className="bank-question"><circle cx="252" cy="118" r="20"/><text x="252" y="125" textAnchor="middle">?</text></g>:<g className="broken-link"><path d="M232 109 L241 118 L232 127 M271 109 L262 118 L271 127 M247 99 L255 89 M247 137 L255 147"/><text className="case-alert" x="252" y="166" textAnchor="middle">Terputus</text></g>}
+    <path className="case-track standby-link" d="M130 145 H168 V206 H322 V187 H368"/>
+    <Store x={369} y={37} label="Utama"/><Store x={369} y={156} label="Pengganti" active={healthy}/>
+    {healthy?[0,1,2].map(i=><g key={i} className={`bank-transfer packet-${i}`} style={delay(i)}><circle r="7"/></g>):<g className="bank-request"><circle r="7"/></g>}
+    <text className="case-caption" x="260" y="247" textAnchor="middle">{healthy?'Permintaan melewati jalur pengganti':phase==='symptom'?'Belum ada balasan dari layanan': 'Layanan menunggu penyimpanan pengganti'}</text>
+  </svg>;
+  const failed=phase==='fault',published=phase==='resolved';
+  return <svg className={`case-canvas report-scene phase-${phase}`} viewBox="0 0 520 260" role="img" aria-label={published?'Format data sudah sesuai, pemeriksaan lolos, laporan terbaru diterbitkan.':failed?'Satu format data tidak cocok saat diperiksa. Laporan lama tetap tersedia.':phase==='working'?'Data diperiksa sebelum laporan diganti.':'Data baru menunggu pemeriksaan, pelanggan masih melihat laporan lama.'}>
+    <text className="case-label" x="25" y="29">Data baru</text><text className="case-label" x="197" y="29">Periksa format</text>
+    <path className="case-track" d="M45 112 H400"/>
+    {[0,1,2].map(i=><g key={i} className={`report-record record-${i}`} style={delay(i)}><rect x="24" y={53+i*48} width="77" height="35" rx="7"/><path className="case-ink" d={`M37 ${65+i*48} H63 M37 ${75+i*48} H57`}/>{i===1&&!published?<path className="mismatch-shape" d="M78 106 L87 121 H69 Z"/>:<rect className="matching-shape" x="71" y={63+i*48} width="14" height="14" rx="2"/>}</g>)}
+    <rect className="format-gate" x="211" y="49" width="83" height="130" rx="13"/><rect className="format-slot" x="237" y="70" width="30" height="30" rx="4"/>
+    {failed?<><path className="bad-record" d="M252 111 L273 146 H231 Z"/><text className="case-alert" x="252" y="201" textAnchor="middle">Tidak cocok</text></>:published?<path className="format-check" d="M235 133 L248 146 L272 119"/>:<><path className="scan-beam" d="M220 118 H286"/><text className="case-small" x="252" y="158" textAnchor="middle">{phase==='working'?'Memeriksa':'Menunggu'}</text></>}
+    <g className={`report-paper ${published?'fresh':'old'}`}><rect x="367" y="56" width="128" height="126" rx="12"/><text className="case-label" x="431" y="82" textAnchor="middle">Laporan</text><path d="M386 99 H475 M386 111 H455"/><rect x="386" y="135" width="16" height="28" rx="3"/><rect x="410" y={published?122:143} width="16" height={published?41:20} rx="3"/><rect x="434" y={published?114:137} width="16" height={published?49:26} rx="3"/><text className="case-label" x="431" y="207" textAnchor="middle">{published?'Data terbaru':'Data lama'}</text></g>
+    {published&&<g className="report-publish"><Ticket x={0} y={0}/></g>}
+    <text className="case-caption" x="260" y="247" textAnchor="middle">{published?'Lolos pemeriksaan, laporan baru diterbitkan':failed?'Data diperbaiki dulu; laporan lama tetap aman':phase==='working'?'Laporan belum diganti selama pemeriksaan':'Data sudah datang, laporan belum diperbarui'}</text>
+  </svg>;
+}
