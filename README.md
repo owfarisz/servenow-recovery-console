@@ -26,6 +26,12 @@ npm run preview
 
 Browser test memakai Google Chrome lokal melalui Playwright. Bila Chrome tidak tersedia, sesuaikan `channel` pada `playwright.config.ts` atau install browser Playwright. Pengujian browser memerlukan server dev di port 5173. Screenshot dan contoh ekspor berada di `artifacts/`.
 
+## Tampilan sederhana (default)
+
+Halaman pertama sekarang memandu pengguna melalui empat langkah: pilih kebutuhan, pulihkan layanan, periksa hasil, lalu putuskan bersama. Huruf lebih besar, tombol minimal 52px, satu tindakan utama per tahap, dan istilah teknis disimpan di rincian yang dapat dibuka. Di ponsel, tombol mulai tetap terlihat.
+
+Pilih **Buka tampilan lengkap** untuk panel teknis semula. Kedua tampilan memakai mesin simulasi dan data yang sama. Keputusan pelanggan dan kerja sama tetap membutuhkan klik eksplisit; pemulihan teknis tidak otomatis menerima bukti atau membuat renewal.
+
 ## Fitur
 
 - `/`: lima pelanggan, peta recovery terhubung, konteks aksi, baseline/target, budget dan audit trail.

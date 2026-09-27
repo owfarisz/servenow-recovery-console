@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-test.beforeEach(async({page})=>{await page.goto('/');await page.evaluate(()=>localStorage.clear());await page.reload();});
+test.beforeEach(async({page})=>{await page.goto('/?detail=1');await page.evaluate(()=>localStorage.clear());await page.reload();});
 test('S1 complete interactive journey, persistence, export and responsive screenshots',async({page})=>{
 const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
 await page.setViewportSize({width:1440,height:900});await page.screenshot({path:'artifacts/overview-desktop.png',fullPage:true});
@@ -18,7 +18,7 @@ await page.getByRole('button',{name:'Renewal Decision',exact:false}).click();awa
 await page.reload();await expect(page.getByText('Dijeda',{exact:true})).toBeVisible();
 const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('servenow-v1')!));expect(saved.accounts[0].contract).toBe('renewed');expect(Object.values(saved.remote).reduce((v:number,r:any)=>v+r.effects,0)).toBe(10);
 const download=page.waitForEvent('download');await page.getByRole('button',{name:'Ekspor sesi',exact:true}).click();await (await download).saveAs('artifacts/session-evidence.json');
-await page.goto('/');await page.getByRole('button',{name:'Mode presentasi'}).click();await page.setViewportSize({width:1280,height:720});await page.screenshot({path:'artifacts/overview-presentation.png',fullPage:true});
+await page.goto('/?detail=1');await page.getByRole('button',{name:'Mode presentasi'}).click();await page.setViewportSize({width:1280,height:720});await page.screenshot({path:'artifacts/overview-presentation.png',fullPage:true});
 await page.getByRole('button',{name:'Mode presentasi'}).click();await page.setViewportSize({width:390,height:844});await page.screenshot({path:'artifacts/overview-mobile.png',fullPage:true});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);expect(errors).toEqual([]);
 });
 test('S3 failure, safe replay, deep link and paused clock',async({page})=>{await page.getByLabel('Skenario',{exact:true}).selectOption('S3');await page.goto('/flow');await page.getByRole('button',{name:'Pipeline data',exact:true}).click();await page.getByRole('button',{name:'Run next batch'}).click();await page.getByRole('button',{name:'Proses 3 detik'}).click();let state=await page.evaluate(()=>JSON.parse(localStorage.getItem('servenow-v1')!));expect(state.pipeline.checkpoint).toBe(100);expect(state.pipeline.status).toBe('failed');await page.getByRole('button',{name:'Koreksi mapping'}).click();await page.getByRole('button',{name:'Run next batch'}).click();await page.getByRole('button',{name:'Proses 3 detik'}).click();state=await page.evaluate(()=>JSON.parse(localStorage.getItem('servenow-v1')!));expect(state.pipeline.checkpoint).toBe(103);await page.reload();await expect(page.getByRole('heading',{name:'Streamline the Flow'})).toBeVisible();expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('servenow-v1')!).pipeline.checkpoint)).toBe(103);});

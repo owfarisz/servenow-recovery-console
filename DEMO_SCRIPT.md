@@ -1,5 +1,17 @@
 # Demo ServeNow — sekitar tiga menit
 
+## Tampilan sederhana: jalur utama baru
+
+1. Pilih **Tiket menumpuk** (TokoCepat), lalu **Setuju, mulai pemulihan**.
+2. **Periksa gangguan** → **Pulihkan layanan** → **Proses 10 tiket**. Proses berjalan otomatis; tombol Jeda tersedia.
+3. Saat satu tiket belum pasti, klik **Pastikan hasil tiket**. Lalu **Perbarui laporan** → **Lanjut ke hasil**.
+4. **Siapkan hasil pemeriksaan** → keputusan pelanggan **Hasil sudah sesuai** atau **Minta diperbaiki**.
+5. **Lanjut ke keputusan** → **Lanjutkan kerja sama** atau **Bicarakan dulu**. Ringkasan dapat diunduh.
+
+Untuk Bank, tambahkan contoh catatan dan pemeriksaan tambahan secara eksplisit. Untuk TeleNusa, laporan awal gagal; pilih **Perbaiki dan coba lagi**. Penjelasan teknis ada di **Apa yang terjadi?** dan **Buka tampilan lengkap**.
+
+Panduan di bawah menjelaskan tampilan lengkap.
+
 Sebelum presentasi: buka Overview, pilih S1 (TokoCepat). Gunakan Reset semua melalui footer bila ingin menghapus seluruh keputusan sebelumnya. Reset Run hanya membuat run baru; evidence lama menjadi historis, ledger tetap. Tekan ikon Mode presentasi untuk menyembunyikan sidebar.
 
 ## S1 — perjalanan utama

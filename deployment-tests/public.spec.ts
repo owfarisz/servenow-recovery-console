@@ -4,7 +4,9 @@ test('published site loads assets, deep links, and interactive pipeline', async 
   page.on('pageerror', error => errors.push(error.message));
   const response = await page.goto('https://owfarisz.github.io/servenow-recovery-console/');
   expect(response?.status()).toBe(200);
-  await expect(page.getByRole('heading', {name:'Pulihkan sistem. Kembalikan kepercayaan.'})).toBeVisible();
+  await expect(page.getByRole('heading', {name:/Mari pulihkan layanan/})).toBeVisible();
+  await page.screenshot({path:'artifacts/published-simple-desktop.png',fullPage:true});
+  await page.getByRole('button',{name:'Buka tampilan lengkap'}).click();
   await page.getByLabel('Skenario', {exact:true}).selectOption('S3');
   await page.getByRole('link', {name:'Streamline the Flow',exact:true}).click();
   await expect(page).toHaveURL(/#\/flow$/);
