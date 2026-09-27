@@ -12,6 +12,8 @@ test('packets move, stop before faults, pause, and respect reduced motion',async
   await expect.poll(position,{timeout:5000}).not.toBe(first);
   expect(await packet.evaluate(e=>getComputedStyle(e).offsetPath)).toContain('277');
   await page.getByRole('button',{name:'Jeda animasi data',exact:true}).click();
+  await expect(motion).toHaveAttribute('data-motion','paused');
+  await packet.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));
   const paused=await position();await page.waitForTimeout(400);expect(await position()).toBe(paused);
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('servenow-v1')!).run.now)).toBe(now);
   await page.getByRole('button',{name:'Putar animasi data',exact:true}).click();
