@@ -9,9 +9,9 @@ test('simple S1: one action at a time, explicit customer acceptance, and renewal
   await page.getByRole('button',{name:'Periksa gangguan',exact:true}).click();
   await page.getByRole('button',{name:'Pulihkan layanan',exact:true}).click();
   await page.getByRole('button',{name:'Proses 10 tiket',exact:true}).click();
-  await expect(page.locator('.easy-visual')).toHaveClass(/working/);
+  await expect(page.locator('.recovery-story')).toHaveClass(/flow-running/);
   await page.getByRole('button',{name:'Jeda sebentar'}).click();
-  await expect(page.locator('.easy-visual')).not.toHaveClass(/working/);
+  await expect(page.locator('.recovery-story')).not.toHaveClass(/flow-running/);
   await page.getByRole('button',{name:'Lanjutkan proses'}).click();
   await page.getByRole('button',{name:'Pastikan hasil tiket'}).click({timeout:18000});
   await page.getByRole('button',{name:'Perbarui laporan',exact:true}).click();

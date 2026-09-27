@@ -1,0 +1,46 @@
+import {test,expect} from '@playwright/test';
+test.beforeEach(async({page})=>{await page.goto('/');await page.evaluate(()=>localStorage.clear());await page.reload();});
+test('workflow pinpoints the discovered bottleneck, magnifies it, and visibly recovers',async({page})=>{
+  await page.setViewportSize({width:1440,height:900});
+  await page.getByRole('button',{name:'Setuju, mulai pemulihan'}).click();
+  await expect(page.getByRole('button',{name:/Perbesar Proses layanan/})).toHaveAttribute('aria-pressed','true');
+  await page.getByRole('button',{name:'Periksa gangguan',exact:true}).click();
+  const database=page.getByRole('button',{name:/Perbesar Penyimpanan data/});
+  await expect(database).toHaveAttribute('aria-pressed','true');await expect(database).toHaveClass(/problem/);
+  await expect(page.getByRole('heading',{name:'Jalur penyimpanan terlalu penuh.'})).toBeVisible();
+  await expect(page.locator('.problem-closeup')).toContainText('DI SINI MASALAHNYA');
+  await page.screenshot({path:'artifacts/workflow-problem-desktop.png',fullPage:true,animations:'disabled'});
+  await page.getByRole('button',{name:/Perbesar Tiket masuk/}).click();
+  await expect(page.locator('.problem-closeup')).toContainText('Bagian ini sudah berjalan');
+  await page.getByRole('button',{name:'Kembali ke bagian yang ditangani'}).click();
+  await expect(database).toHaveAttribute('aria-pressed','true');
+  await page.getByRole('button',{name:'Pulihkan layanan',exact:true}).click();
+  await expect(database).toHaveClass(/good/);await expect(database).not.toHaveClass(/problem/);
+  await expect(page.getByRole('heading',{name:'Jalur data sudah lebih lapang.'})).toBeVisible();
+  await page.screenshot({path:'artifacts/workflow-recovered-desktop.png',fullPage:true,animations:'disabled'});
+});
+test('mobile workflow follows the data fault to its actual location, with reduced motion',async({page})=>{
+  await page.setViewportSize({width:390,height:844});await page.emulateMedia({reducedMotion:'reduce'});
+  await page.getByRole('button',{name:/TeleNusa.*Laporan terlambat/}).click();
+  await page.getByRole('button',{name:'Setuju, mulai pemulihan'}).click();
+  await expect(page.getByRole('button',{name:/Perbesar Laporan pelanggan/})).toHaveAttribute('aria-pressed','true');
+  await page.getByRole('button',{name:'Perbarui laporan',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'Format data tidak sesuai.'})).toBeVisible();
+  const gate=page.getByRole('button',{name:/Perbesar Periksa data/});
+  await expect(gate).toHaveClass(/problem/);await expect(gate).toHaveAttribute('aria-pressed','true');
+  expect(await page.locator('.problem-closeup').evaluate(e=>getComputedStyle(e).animationName)).toBe('none');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('servenow-v1')!).pipeline.checkpoint)).toBe(100);
+  await page.screenshot({path:'artifacts/workflow-problem-mobile.png',fullPage:true,animations:'disabled'});
+  await page.getByRole('button',{name:'Perbaiki dan coba lagi'}).click();
+  await expect(page.getByRole('heading',{name:'Laporan terbaru sudah tersedia.'})).toBeVisible();
+  await expect(gate).toHaveClass(/good/);
+});
+test('bank diagnosis highlights the failed data store rather than the customer',async({page})=>{
+  await page.getByRole('button',{name:/Bank FinNusantara.*Layanan terhenti/}).click();
+  await page.getByRole('button',{name:'Setuju, mulai pemulihan'}).click();
+  await page.getByRole('button',{name:'Periksa gangguan',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'Penyimpanan data tidak merespons.'})).toBeVisible();
+  await expect(page.getByRole('button',{name:/Perbesar Hasil ke pelanggan/})).not.toHaveClass(/problem/);
+  await page.setViewportSize({width:1280,height:720});await page.screenshot({path:'artifacts/workflow-bank-1280.png',fullPage:true,animations:'disabled'});
+});

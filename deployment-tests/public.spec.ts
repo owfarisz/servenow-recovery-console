@@ -6,6 +6,11 @@ test('published site loads assets, deep links, and interactive pipeline', async 
   expect(response?.status()).toBe(200);
   await expect(page.getByRole('heading', {name:/Mari pulihkan layanan/})).toBeVisible();
   await page.screenshot({path:'artifacts/published-simple-desktop.png',fullPage:true});
+  await page.getByRole('button',{name:'Setuju, mulai pemulihan'}).click();
+  await page.getByRole('button',{name:'Periksa gangguan',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'Jalur penyimpanan terlalu penuh.'})).toBeVisible();
+  await expect(page.getByRole('button',{name:/Perbesar Penyimpanan data/})).toHaveClass(/problem/);
+  await page.screenshot({path:'artifacts/published-workflow.png',fullPage:true,animations:'disabled'});
   await page.getByRole('button',{name:'Buka tampilan lengkap'}).click();
   await page.getByLabel('Skenario', {exact:true}).selectOption('S3');
   await page.getByRole('link', {name:'Streamline the Flow',exact:true}).click();

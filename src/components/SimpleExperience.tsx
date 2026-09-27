@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type Dispatch } from 'react';
 import { ArrowLeft, ArrowRight, Check, CheckCircle2, ChevronDown, CircleHelp, Download, FileCheck2, HeartHandshake, Pause, Play, RotateCcw, Server, ShieldCheck, ShoppingBag, Signal, Sparkles, X } from 'lucide-react';
 import { account, accepted, cohort, currentEvidence, forecast, type Action, type Scenario, type State } from '../domain/engine';
 import './simple.css';
+import RecoveryWorkflow from './RecoveryWorkflow';
 
 type Props = { state: State; dispatch: Dispatch<Action>; onAdvanced: () => void; onExport: () => void; storageNotice: string };
 const choices: {id: Scenario; customer: string; title: string; description: string; icon: typeof ShoppingBag}[] = [
@@ -79,16 +80,15 @@ export default function SimpleExperience({state:s,dispatch:d,onAdvanced,onExport
       </>}
       {page===1&&<>
         <div className="easy-section-heading"><button className="easy-back" onClick={()=>go(0)}><ArrowLeft size={20}/> Kembali</button><span>{active.customer} <span> / </span> {active.title}</span></div>
-        <section className="easy-workspace">
-          <div className={`easy-visual ${s.running?'working':''}`} aria-hidden="true"><div className="easy-orbit orbit-one"/><div className="easy-orbit orbit-two"/><span className="easy-float float-one"><FileCheck2 size={26}/></span><span className="easy-float float-two"><ShieldCheck size={27}/></span><div className="easy-central-icon">{ready?<CheckCircle2 size={66}/>:<Icon size={66}/>}</div><div className="easy-visual-label">{ready?'Siap diperiksa':s.running?'Sedang berjalan':'Kita kerjakan bersama'}</div></div>
-          <div className="easy-task" aria-live="polite"><span className="easy-eyebrow">LANGKAH 2 DARI 4</span><h1 ref={titleRef} tabIndex={-1}>{taskTitle}</h1><p>{taskText}</p>
+        <RecoveryWorkflow state={s}>
+          <div className="easy-task" aria-live="polite"><span className="easy-eyebrow">YANG KITA LAKUKAN SEKARANG</span><h1 ref={titleRef} tabIndex={-1}>{taskTitle}</h1><p>{taskText}</p>
             {s.run.scenario==='S1'&&hasJobs&&<div className="easy-progress" aria-label={`${finished} dari ${jobs.length} tiket selesai`}><div><strong>{finished} <span>dari {jobs.length} tiket selesai</span></strong>{s.running&&<span className="easy-running-dot"/>}</div><progress max={jobs.length} value={finished}/></div>}
             {s.pipeline.status==='failed'&&<div className="easy-soft-warning">Belum ada data baru yang diterbitkan.</div>}
             {s.run.scenario==='S2'&&coreReady&&<p className="easy-hint">Catatan dan pemeriksaan ini hanya contoh, bukan bukti audit nyata.</p>}
             <button className="easy-primary" onClick={action}>{s.running?<Pause size={20}/>:null}{actionText}{!s.running&&<ArrowRight size={22}/>}</button>
             <details className="easy-details"><summary>Apa yang terjadi? <ChevronDown size={18}/></summary><p>{s.run.scenario==='S1'?'Layanan dipulihkan, tiket diselesaikan satu kali, lalu laporan diperbarui. Penerimaan tiket belum berarti tiket selesai.':s.run.scenario==='S2'?'Tim menyiapkan layanan cadangan, memulihkan layanan, lalu memeriksa hasilnya. Pemeriksaan keamanan tetap terpisah.':'Data diperiksa sebelum laporan diterbitkan. Jika pemeriksaan gagal, laporan sebelumnya tetap tersedia.'}</p><button className="easy-text-button" onClick={switchDetails}>Lihat rincian teknis <ArrowRight size={17}/></button></details>
           </div>
-        </section>
+        </RecoveryWorkflow>
       </>}
       {page===2&&<>
         <div className="easy-section-heading"><button className="easy-back" onClick={()=>go(1)}><ArrowLeft size={20}/> Kembali</button><span>{ac.name}</span></div>
