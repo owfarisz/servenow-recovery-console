@@ -34,3 +34,11 @@ Tests verify the deterministic frontend demonstrator, not real infrastructure th
 GitHub Pages: https://owfarisz.github.io/servenow-recovery-console/
 
 GitHub Actions build and deploy completed successfully (run 36263700639). Clean Linux runner independently passed npm ci, typecheck, 13 unit tests, and the Pages-base production build. Public Chrome smoke test passed: HTTP 200, static assets, hash route navigation/reload, S3 failure/replay (checkpoint 100→103), mobile layout without document overflow, and no page errors. Screenshot: `artifacts/published-mobile.png`.
+
+## Revisi antarmuka tunggal ramah lansia
+
+Tampilan teknis terpisah dihapus dari entry point. Seluruh fungsi utama dipindahkan ke empat langkah dan rincian yang dapat dibuka pada halaman yang sama. Lima pelanggan memiliki perjalanan bukti masing-masing; dua unit test baru memeriksa kepemilikan dan arsip saat memulai/reset perjalanan pelanggan.
+
+Build produksi dan 18 unit test lulus. Suite browser diperbarui untuk antarmuka tunggal: navigasi tautan lama, kelima pelanggan, pemulihan bank bertahap dan kegagalan verifikasi, pencatatan pekerjaan gagal, balasan ambigu, input saat clock berjalan, pipeline gagal/replay, perubahan kesepakatan, anggaran, refund, ekspor, data lokal rusak, dialog dan responsif. Animasi khusus kasus tetap diuji.
+
+Hasil akhir lokal: 17 tes browser lulus (45,1 detik), 18 unit test lulus, build produksi lulus. Screenshot aktual diperiksa pada desktop 1440×900, tampilan 1280×720, dan HP 390×844. Tidak ada overflow horizontal pada pengujian HP. Ringkasan teks dan ekspor JSON berhasil diunduh.

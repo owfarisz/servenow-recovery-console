@@ -1,0 +1,18 @@
+SERVENOW — RINGKASAN PEMULIHAN
+Simulasi dengan data contoh, bukan kontrak nyata.
+Pelanggan: TokoCepat
+Penanggung jawab: Nadia · Customer Success
+Sesi: run-001
+Kesepakatan versi: 1
+Layanan: Masih ditangani
+
+HASIL PEMERIKSAAN
+Seluruh pekerjaan terverifikasi: Belum tersedia (target >= 100 %). Belum diterima pelanggan.
+Penyelesaian tepat waktu: Belum tersedia (target <= 60 detik). Belum diterima pelanggan.
+Selisih rekonsiliasi: Belum tersedia (target = 0 selisih). Belum diterima pelanggan.
+
+Keputusan kerja sama: Belum diputuskan
+Pemilik keputusan: Belum ditetapkan
+Catatan: Belum ada
+Rencana biaya bersama: Rp520 juta dari Rp750 juta
+Catatan dan pemeriksaan tujuh hari bersifat contoh, bukan pengukuran produksi.

@@ -1,29 +1,11 @@
-# Tampilan sederhana — 27 September 2026
+# Antarmuka tunggal ramah lansia
 
-Tampilan bawaan diganti dengan alur empat langkah untuk pengguna yang memerlukan antarmuka lebih mudah dibaca:
+Seluruh pengalaman sekarang berada dalam empat langkah. Komponen SimpleExperience adalah antarmuka utama dan satu-satunya; kode antarmuka teknis lama telah dilepas dari entry point. Tautan lama tetap membuka langkah yang relevan, tanpa mode alternatif.
 
-1. Pilih kebutuhan.
-2. Pulihkan layanan.
-3. Periksa hasil.
-4. Putuskan bersama.
+Informasi tambahan tersedia melalui bagian yang dapat dibuka di tempat: kesepakatan, profil lima pelanggan, penanganan layanan, pekerjaan satu per satu, pengiriman contoh, laporan, bukti, riwayat, dan biaya. Halaman utama mempertahankan satu tindakan utama yang jelas.
 
-Perubahan utama: teks 17–18px untuk isi utama, tombol minimal 52px, satu tindakan utama per tahap, bahasa sehari-hari, progres yang terlihat, tombol mulai tetap terlihat di ponsel, dan rincian teknis tertutup secara default. Tidak ada label usia pada antarmuka. Tampilan lengkap tetap dapat dibuka dan menggunakan state yang sama.
+RecoveryDetails memakai reducer domain yang sama. Tidak ada state simulasi kedua atau timer tambahan. Review, keputusan kerja sama, dan anggaran tetap memiliki penjagaan domain. Ringkasan teks ditujukan untuk dibaca; JSON lengkap tersedia sebagai pilihan tersendiri.
 
-Tindakan teknis rutin dapat dikelompokkan dalam satu klik, tetapi kesepakatan, customer acceptance, review tambahan Bank, dan keputusan kerja sama tetap tindakan eksplisit. Job ambigu tetap harus diperiksa tanpa kirim ulang; pipeline gagal tidak memajukan checkpoint. Animasi mengikuti clock yang sama dan menghormati reduced motion.
+LogistikGo dan MedikaCare dapat menjalani pemulihan sampai keputusan. Memilih pelanggan baru mengarsipkan run lama tanpa mengganti pemilik catatan. Reset run tetap memilih pelanggan yang sama.
 
-## Verifikasi yang dijalankan
-
-- TypeScript: lulus.
-- 13 tes logika domain: lulus.
-- 8 tes browser Chrome: lulus, termasuk tiga alur sederhana baru serta lima workflow tampilan lengkap.
-- Build produksi Vite: lulus.
-- Screenshot diperiksa pada 1440×900, 1280×720, dan 390×844.
-- Alur S1 sederhana diuji dari kesepakatan hingga renewal; S3 mobile diuji gagal/perbaikan/review; S2 tetap memerlukan contoh pemeriksaan manual secara eksplisit.
-
-Bukti visual: `artifacts/simple-desktop.png`, `simple-1280.png`, `simple-mobile.png`, `simple-mobile-repair.png`, dan `simple-review.png`.
-
-Pemeriksaan ini bukan studi usability dengan partisipan lansia; Safari/Firefox belum diuji terpisah. Preferensi reduced motion mengikuti pengaturan perangkat. Semua data tetap simulasi dan tersimpan per perangkat.
-
-## Website publik
-
-Deployment 5981801 berhasil pada GitHub Pages (Actions run 36289965103). Tes Chrome langsung pada URL publik lulus: halaman bawaan sederhana terlihat, tampilan lengkap tetap terbuka, deep link dapat direload, dan pipeline TeleNusa dapat diperbaiki. Screenshot publik: `artifacts/published-simple-desktop.png`.
+Verifikasi mencakup alur kelima pelanggan, tautan lama, dialog lewat keyboard, input saat waktu berjalan, penanganan data rusak, jeda/reload, kesepakatan berubah, biaya, responsif dan animasi.

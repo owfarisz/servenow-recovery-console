@@ -47,7 +47,7 @@ test('simple mobile S3: readable controls, repair and explicit review',async({pa
   await page.getByRole('button',{name:'Hasil sudah sesuai'}).click();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
-test('simple bank keeps manual review separate, and advanced details remain available',async({page})=>{
+test('simple bank keeps manual review separate, and all details remain within the same interface',async({page})=>{
   await page.getByRole('button',{name:/Bank FinNusantara.*Layanan terhenti/}).click();
   await page.getByRole('button',{name:'Setuju, mulai pemulihan'}).click();
   await page.getByRole('button',{name:'Periksa gangguan',exact:true}).click();
@@ -57,9 +57,8 @@ test('simple bank keeps manual review separate, and advanced details remain avai
   await page.getByRole('button',{name:'Tambahkan contoh pemeriksaan'}).click();
   await page.getByRole('button',{name:'Lanjut ke hasil'}).click();
   await page.getByRole('button',{name:'Siapkan hasil pemeriksaan'}).click();
-  await page.getByRole('button',{name:'Buka tampilan lengkap'}).click();
-  await expect(page.getByRole('link',{name:'Stabilize the Core',exact:true})).toBeVisible();
-  await page.getByRole('button',{name:'Tampilan sederhana',exact:true}).click();
+  await expect(page.getByRole('button',{name:'Buka tampilan lengkap'})).toHaveCount(0);
+  await page.getByRole('button',{name:'Langkah 1: Pilih kebutuhan'}).click();
   await expect(page.getByRole('heading',{name:/Mari pulihkan layanan/})).toBeVisible();
   await page.setViewportSize({width:1280,height:720});await page.screenshot({path:'artifacts/simple-1280.png',fullPage:true});
 });
