@@ -23,3 +23,7 @@ Tindakan teknis rutin dapat dikelompokkan dalam satu klik, tetapi kesepakatan, c
 Bukti visual: `artifacts/simple-desktop.png`, `simple-1280.png`, `simple-mobile.png`, `simple-mobile-repair.png`, dan `simple-review.png`.
 
 Pemeriksaan ini bukan studi usability dengan partisipan lansia; Safari/Firefox belum diuji terpisah. Preferensi reduced motion mengikuti pengaturan perangkat. Semua data tetap simulasi dan tersimpan per perangkat.
+
+## Website publik
+
+Deployment 5981801 berhasil pada GitHub Pages (Actions run 36289965103). Tes Chrome langsung pada URL publik lulus: halaman bawaan sederhana terlihat, tampilan lengkap tetap terbuka, deep link dapat direload, dan pipeline TeleNusa dapat diperbaiki. Screenshot publik: `artifacts/published-simple-desktop.png`.
