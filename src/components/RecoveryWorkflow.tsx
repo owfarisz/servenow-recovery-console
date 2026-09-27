@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { AlertTriangle, ArrowDown, ArrowRight, Check, CheckCircle2, Clock3, Database, FileCheck2, Layers, Search, Server, ShieldCheck, Ticket, Users, ZoomIn } from 'lucide-react';
 import { cohort, type State } from '../domain/engine';
 import './workflow.css';
+import DataMotion from './DataMotion';
 
 type Tone = 'good' | 'problem' | 'warning' | 'waiting' | 'working';
 type Node = { id:string; label:string; caption:string; tone:Tone; icon:typeof Server };
@@ -37,8 +38,21 @@ export function recoveryStory(s:State):{nodes:Node[];focus:Focus} {
   return {nodes,focus};
 }
 
-export default function RecoveryWorkflow({state:s,children}:{state:State;children:ReactNode}){
+export default function RecoveryWorkflow({state:s,children,onPause}:{state:State;children:ReactNode;onPause:()=>void}){
   const {nodes,focus}=recoveryStory(s);
+  const [preview,setPreview]=useState(true);
+  const [reducedMotion,setReducedMotion]=useState(()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const wasRunning=useRef(s.running);
+  useEffect(()=>{if(wasRunning.current&&!s.running)setPreview(false);wasRunning.current=s.running;},[s.running]);
+  useEffect(()=>{
+    const media=window.matchMedia('(prefers-reduced-motion: reduce)');
+    const change=()=>setReducedMotion(media.matches);
+    const visibility=()=>{if(document.hidden)setPreview(false);};
+    media.addEventListener('change',change);document.addEventListener('visibilitychange',visibility);
+    return ()=>{media.removeEventListener('change',change);document.removeEventListener('visibilitychange',visibility);};
+  },[]);
+  const playing=(s.running||preview)&&!reducedMotion;
+  const toggleMotion=()=>{if(playing){setPreview(false);if(s.running)onPause();}else setPreview(true);};
   const [selection,setSelection]=useState<{key:string;index:number}|null>(null);
   const selected=selection?.key===focus.key?selection.index:focus.index;
   const active=nodes[selected], onProblem=selected===focus.index;
@@ -51,20 +65,16 @@ export default function RecoveryWorkflow({state:s,children}:{state:State;childre
   },[focus.key]);
   const inspect=(index:number)=>{setSelection({key:focus.key,index});detailRef.current?.scrollIntoView({behavior:reduced()?'instant':'smooth',block:'nearest'});};
   const tone=onProblem?focus.tone:active.tone;
-  const ActiveIcon=active.icon;
-  return <section className={`recovery-story ${s.running?'flow-running':''}`} aria-label="Alur layanan dan lokasi gangguan">
+  const mode=onProblem&&focus.visual==='reply'?'awaiting':tone==='problem'||tone==='warning'?'blocked':tone==='waiting'?'waiting':'flowing';
+  return <section className={`recovery-story ${s.running?'flow-running':''} ${playing?'illustration-playing':''}`} aria-label="Alur layanan dan lokasi gangguan">
     <div className="story-heading"><div><span className="easy-eyebrow">IKUTI ALURNYA</span><h2>Di mana prosesnya tersendat?</h2></div><span className={`story-signal ${focus.tone}`}><span/>{focus.resolved?'Bagian ini sudah pulih':focus.tone==='problem'?'Masalah ditemukan':focus.tone==='working'?'Proses berjalan':'Perlu diperiksa'}</span></div>
-    <ol className="story-flow">{nodes.map((node,i)=>{const I=node.icon;const blocked=['problem','warning'].includes(node.tone)&&i===focus.index;return <li key={node.id} className={`${blocked?'flow-blocked':''} ${node.tone}`}><button className={`flow-node ${node.tone} ${selected===i?'selected':''}`} onClick={()=>inspect(i)} aria-pressed={selected===i} aria-label={`Perbesar ${node.label}: ${node.caption}`}><span className="flow-node-top"><span className="flow-step">{i+1}</span><I size={25}/>{node.tone==='good'?<CheckCircle2 size={18}/>:node.tone==='problem'?<AlertTriangle size={19}/>:null}</span><strong>{node.label}</strong><span className="flow-caption">{node.caption}</span><span className="flow-focus-label">{selected===i?<><ZoomIn size={15}/> Sedang diperbesar</>:<>Lihat bagian ini <ZoomIn size={14}/></>}</span></button>{i<nodes.length-1&&<span className="flow-connector" aria-label={blocked?'Alur tertahan':'Alur menuju tahap berikutnya'}>{blocked?<span className="flow-stop">!</span>:<ArrowRight size={21}/>}</span>}</li>;})}</ol>
+    <ol className="story-flow">{nodes.map((node,i)=>{const I=node.icon;const blocked=['problem','warning'].includes(node.tone)&&i===focus.index;return <li key={node.id} className={`${blocked?'flow-blocked':''} ${node.tone}`}><button className={`flow-node ${node.tone} ${selected===i?'selected':''}`} onClick={()=>inspect(i)} aria-pressed={selected===i} aria-label={`Perbesar ${node.label}: ${node.caption}`}><span className="flow-node-top"><span className="flow-step">{i+1}</span><I size={25}/>{node.tone==='good'?<CheckCircle2 size={18}/>:node.tone==='problem'?<AlertTriangle size={19}/>:null}</span><strong>{node.label}</strong><span className="flow-caption">{node.caption}</span><span className="transit-rail" data-route={node.tone==='waiting'?'waiting':'active'} aria-hidden="true"><i className="node-packet" style={{'--packet-delay':`${-i*.65}s`} as CSSProperties}/></span><span className="flow-focus-label">{selected===i?<><ZoomIn size={15}/> Sedang diperbesar</>:<>Lihat bagian ini <ZoomIn size={14}/></>}</span></button>{i<nodes.length-1&&<span className={`flow-connector ${node.tone==='waiting'||nodes[i+1]?.tone==='waiting'?'waiting':''}`} aria-label={blocked?'Alur tertahan':'Alur menuju tahap berikutnya'}>{blocked?<span className="flow-stop">!</span>:<ArrowRight size={21}/>}<i className="flow-data-dot" aria-hidden="true"/></span>}</li>;})}</ol>
     <div className="focus-bridge"><span/><ZoomIn size={17}/><b>{active.label}</b><ArrowDown size={17}/><span/></div>
     <div className={`story-focus ${tone}`} ref={detailRef}>
       <div className="problem-closeup" key={`${focus.key}-${selected}`}>
         <div className="closeup-heading"><span className={`closeup-symbol ${tone}`}>{tone==='problem'?<AlertTriangle size={22}/>:tone==='good'?<CheckCircle2 size={23}/>:<ZoomIn size={22}/>}</span><span>{onProblem?focus.label:'BAGIAN ALUR YANG DIPILIH'}</span><span className="closeup-step">{selected+1}/{nodes.length}</span></div>
         <h2>{onProblem?focus.title:active.label}</h2>
-        <div className={`problem-illustration ${onProblem?focus.visual:'inspect'} ${tone}`} role="img" aria-label={onProblem?`${focus.before} → ${focus.after}`:`${active.label}: ${active.caption}`}>
-          <div className="illustration-before"><span>{onProblem?focus.before:active.label}</span><div className="ticket-stack"><i/><i/><i/></div></div>
-          <div className="illustration-path"><span/><span/><span/>{tone==='problem'?<b>×</b>:tone==='warning'?<b>?</b>:<ArrowRight size={28}/>}</div>
-          <div className="illustration-system"><span className="system-icon">{onProblem&&focus.resolved?<CheckCircle2 size={44}/>:<ActiveIcon size={44}/>}</span><strong>{onProblem?focus.after:active.caption}</strong></div>
-        </div>
+        <DataMotion mode={mode} playing={playing} reduced={reducedMotion} live={s.running} onToggle={toggleMotion} source={onProblem?focus.before:active.label} destination={onProblem?focus.after:active.caption}/>
         <p className="closeup-cause">{onProblem?focus.cause:active.tone==='good'?'Bagian ini sudah berjalan. Titik yang perlu ditangani ditandai pada alur di atas.':active.tone==='waiting'?'Bagian ini menunggu proses sebelumnya selesai.':'Status bagian ini mengikuti hasil simulasi yang sedang berjalan.'}</p>
         {onProblem&&<div className="closeup-impact"><Users size={21}/><div><span>DAMPAK BAGI PELANGGAN</span><p>{focus.impact}</p></div></div>}
         {!onProblem&&<button className="easy-text-button" onClick={()=>inspect(focus.index)}>Kembali ke bagian yang ditangani <ArrowRight size={17}/></button>}

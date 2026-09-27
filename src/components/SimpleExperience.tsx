@@ -80,7 +80,7 @@ export default function SimpleExperience({state:s,dispatch:d,onAdvanced,onExport
       </>}
       {page===1&&<>
         <div className="easy-section-heading"><button className="easy-back" onClick={()=>go(0)}><ArrowLeft size={20}/> Kembali</button><span>{active.customer} <span> / </span> {active.title}</span></div>
-        <RecoveryWorkflow state={s}>
+        <RecoveryWorkflow state={s} onPause={()=>d({type:'pause'})}>
           <div className="easy-task" aria-live="polite"><span className="easy-eyebrow">YANG KITA LAKUKAN SEKARANG</span><h1 ref={titleRef} tabIndex={-1}>{taskTitle}</h1><p>{taskText}</p>
             {s.run.scenario==='S1'&&hasJobs&&<div className="easy-progress" aria-label={`${finished} dari ${jobs.length} tiket selesai`}><div><strong>{finished} <span>dari {jobs.length} tiket selesai</span></strong>{s.running&&<span className="easy-running-dot"/>}</div><progress max={jobs.length} value={finished}/></div>}
             {s.pipeline.status==='failed'&&<div className="easy-soft-warning">Belum ada data baru yang diterbitkan.</div>}
